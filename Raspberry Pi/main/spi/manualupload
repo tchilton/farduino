@@ -1,0 +1,18 @@
+#! /bin/bash
+# This script is not normally required, but it can be used to re-push the last firmware to the device
+
+# Which pin is used to reset the Arduino
+RESETPIN=24
+
+/usr/local/bin/avrdude -patmega2560 -D -Uflash:w:/firmware/main/chicken-coop.hex:i -C /usr/local/etc/avrdude.conf -c linuxspi -P /dev/spidev0.0 -s
+
+# reset the Arduino, its driven by an open collector pin 
+if [ ! -e /sys/class/gpio/gpio$RESETPIN ] ; then
+	echo $RESETPIN > /sys/class/gpio/export
+	sleep 0.1
+fi
+# Setting the direction enables the pin as an output as well as driving the required level
+echo high > /sys/class/gpio/gpio$RESETPIN/direction
+echo low  > /sys/class/gpio/gpio$RESETPIN/direction
+
+

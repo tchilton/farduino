@@ -1,0 +1,16 @@
+#! /bin/bash
+# Manually re-load the standard Arduino Bootloader for an Arduino Mega 2560
+
+RESETPIN=24 			# Which pin is used to reset the Arduino
+
+/usr/local/bin/avrdude -patmega2560 -D -Uflash:w:/firmware/main/bootloader/stk500boot_v2_mega2560.hex:i -C /usr/local/etc/avrdude.conf -c linuxspi -P /dev/spidev0.0 -s
+
+# reset the arduino, its driven by an open collector pin 
+if [ ! -e /sys/class/gpio/gpio$RESETPIN ] ; then
+	echo $RESETPIN > /sys/class/gpio/export
+	sleep 0.1
+fi
+echo high > /sys/class/gpio/gpio$RESETPIN/direction
+echo low  > /sys/class/gpio/gpio$RESETPIN/direction
+
+

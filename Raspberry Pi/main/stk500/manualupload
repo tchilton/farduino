@@ -1,0 +1,30 @@
+#! /bin/bash
+# This script is not normally required, but it can be used to re-push the last firmware to the device
+# This script uses the STK500v2 protocol to upload the sketch
+
+# Which pin is used to reset the Arduino
+RESETPIN=24
+
+# Check if minicom is running, since that could have the logging port open
+# which means that the programming command will fail
+
+ps cax | grep minicom
+if [ $? -eq 0 ] ; then
+  echo Minicom is currently running, serial upload port in use ??
+fi
+
+
+/usr/local/bin/avrdude -patmega2560 -D -Uflash:w:/firmware/main/chicken-coop.hex:i -C /usr/local/etc/avrdude.conf -c stk500v2 -P /dev/ttyACM0 -b 115200
+
+echo Resetting Arduino ..
+if [ ! -e /sys/class/gpio/gpio$RESETPIN ] ; then
+	echo $RESETPIN > /sys/class/gpio/export
+	sleep 0.1
+fi
+
+# reset the Arduino, its driven by an open collector pin 
+# Setting the direction enables the pin as an output as well as driving the required level
+echo high > /sys/class/gpio/gpio$RESETPIN/direction
+echo low  > /sys/class/gpio/gpio$RESETPIN/direction
+
+

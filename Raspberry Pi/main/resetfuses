@@ -1,0 +1,5 @@
+# If fuses get screwed up and the Arduino has not been reset, then you may be able to recover the fuses with 
+
+# Write fuses
+/usr/local/bin/avrdude -v -v -v -v -patmega2560 -D  -C /usr/local/etc/avrdude.conf -c linuxspi -P /dev/spidev0.0 -U lfuse:w:0xff:m -U hfuse:w:0xd0:m -U efuse:w:0xfd:m
+

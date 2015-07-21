@@ -1,0 +1,4 @@
+#! /bin/bash
+
+/usr/local/bin/avrdude -C/usr/local/etc/avrdude.conf -v -v -patmega328p -D -Uflash:w:/firmware/rotator/firmware.hex:i -C /usr/local/etc/avrdude.conf -c avrisp -P /dev/ttyACM0 -b57600 -s
+

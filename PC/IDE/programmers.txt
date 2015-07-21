@@ -1,0 +1,9 @@
+# My programming interfaces
+# The standard Arduino file this is taken from is in c:\Program Files (x86)\Arduino\hardware\arduino\avr
+
+# This is only required for initial bootloader programming
+#remotessh.name=Remote SSH upload
+#remotessh.communication=scp
+#remotessh.protocol=linuxspi
+#remotessh.program.tool=remotessh
+#remotessh.program.extra_params=

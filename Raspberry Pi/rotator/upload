@@ -1,0 +1,134 @@
+#! /bin/bash
+# Upload firmware to the Arduino running the rotator, which is connected via the main 
+# Arduino connected to this system
+# This script is called from the Arduino IDE on a remote computer
+
+# This receives all passed parameters from Arduino IDE
+# Local values to set local configuration for this system 
+# override IDE parameters by putting local values last
+
+# Note user running this script must be a member of the following linux groups
+# gpio - to allow the reset pins and similar to be controlled
+# dialout - if stk500v2 programming is used
+
+# Local configuration
+
+LOGFILE="/firmware/rotator/logfile"		    # Where is the log file 
+HEXFILE="/firmware/rotator/firmware.hex" 	# Name of the .hex file to be programmed
+MINSIZE=1000 				                # Minumum expected size of the firmware file
+RESETPIN=24	                       			# Which pin is used to reset the arduino
+SERIALPORT="/dev/ttyACM0"                   # Which Serial port are we using
+
+
+## Functions 
+# reset the Arduino, its driven by an open collector pin , so it needs a toggle
+function resetarduino {
+    if [ ! -e /sys/class/gpio/gpio$RESETPIN ] ; then
+        echo $RESETPIN > /sys/class/gpio/export
+        sleep 0.1
+    fi
+
+    echo Resetting Arduino ...
+    echo high > /sys/class/gpio/gpio$RESETPIN/direction
+    sleep 0.01
+    echo low  > /sys/class/gpio/gpio$RESETPIN/direction
+}
+
+
+# Main Code
+
+echo Last Firmware Upload : | tee $LOGFILE
+date | tee -a $LOGFILE
+echo Arguments are $@ >> $LOGFILE
+
+# Check that the user ID is in the correct groups  GPIO and SPI, or is a root equivalent 
+INGROUP=`groups`
+# First check for ordinary users, then for administrative user - either is OK
+if [[ ! $INGROUP =~ dialout ]] || [[ ! $INGROUP =~ gpio ]] ; then
+	if [ "$(id -u)" != "0" ] ; then
+		echo User does not have required SPI and GPIO access	| tee -a $LOGFILE
+		echo Unable to execute application correctly        	| tee -a $LOGFILE
+		exit
+	fi
+fi
+
+# Check that the uploaded file is fresh and exists
+FILEMODSEC=`stat --format=%Y "$HEXFILE"` 	# Get the current file modified time
+MINAGE=$(( `date +%s` -1800 ))			    # File should be less than 30 mins old = 30 x 60 = 1800 seconds
+
+if [ ! -e "$HEXFILE" ] || [ $FILEMODSEC -lt $MINAGE ] ; then
+	echo Hex file does not exist, or is not a recent upload | tee -a $LOGFILE
+	echo Cowardly refusing to program it automatically      | tee -a $LOGFILE
+	exit
+fi
+
+# Check if the file size looks appropriate, to prevent a bad upload
+FILESIZE=`stat -c%s "$HEXFILE"`			# Get the file size
+if [ $FILESIZE -lt $MINSIZE ] ; then
+	echo File size of hex file looks too small to be sensible \($FILESIZE bytes\) | tee -a $LOGFILE
+	echo Cowardly refusing to program it automatically        | tee -a $LOGFILE
+	exit
+fi
+
+# We are good to upload the file, so program it
+ps cax | grep minicom
+if [ $? -eq 0 ] ; then
+  echo Minicom is currently running, seral upload port in use ??
+  echo please close minicom to continue
+  while [ $? -eq 0 ] ; do
+    sleep 1
+    ps cax | grep minicom
+  done
+  sleep 1
+  echo Minicom closed .. continuing
+fi
+
+# Put the main Arduino into a known state to ensure that we can upload 
+# Set correct frame format and toggle DTR to ensure the Arduino resets
+# This will also reset all slaves in the initialisation code.
+stty -F $SERIALPORT 115200 cs8 -clocal hup
+# Force a hangup (DTR transition) - to reset the Arduino
+stty -F $SERIALPORT -hup
+
+# Wait for the main Arduino to reset following its bootloader
+sleep 3
+
+# See what it says - hopefully bootup messages ..
+for num in {1..10} ; do
+    echo < $SERIALPORT > /dev/null
+done
+
+# Place the first Arduino into pass-through mode, so that we can talk directly to the remote
+# Rotator device. This is done via the main Arduino's serial interface. 
+# The "1" argument is for future expansion if multiple slaves are ever implemented
+
+echo "update 1" > $SERIALPORT
+
+# See what it says
+echo < $SERIALPORT > /dev/null
+
+# Note : The on-board LED on the host Arduino should be flashing now indicating its in pass-through mode
+
+echo Upload command is : | tee -a $LOGFILE
+# Command line to be used - Select programming method below
+
+# For an serial isp upload use this command (user must be in dialout group)
+# Note Arduino is based on stk500v2 but forces DTR to reset first. This resets the main Arduino instead
+# We use avrisp, but the timing of the reset from the remote device is important.
+
+CMD="$@ -C /usr/local/etc/avrdude.conf -c avrisp -P $SERIALPORT -b57600 -s"
+
+echo /usr/local/bin/avrdude $CMD    | tee -a $LOGFILE
+/usr/local/bin/avrdude $CMD   2>&1  | tee -a $LOGFILE 
+
+# Return overall state of AvrDuDE to the main IDE
+if [ $? != 0 ] ; then
+	echo avrdude Returned Error code $?	| tee -a $LOGFILE
+else 
+	echo avrdude Returned Success      	| tee -a $LOGFILE
+fi
+
+resetarduino
+
+# Close the SSH session so the IDE knows we're done
+exit

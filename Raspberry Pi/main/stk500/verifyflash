@@ -1,0 +1,4 @@
+# Read the flash from the microcontroller. 
+
+# read flash
+/usr/local/bin/avrdude -patmega2560 -D  -C /usr/local/etc/avrdude.conf -c stk500v2 -P /dev/ttyACM0 -b 115200 -U flash:v:/firmware/chicken-coop.hex:i 

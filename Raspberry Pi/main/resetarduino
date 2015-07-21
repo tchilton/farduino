@@ -1,0 +1,18 @@
+#! /bin/bash
+# Reset the Arduino
+
+# Which pin is used to reset the Arduino
+RESETPIN=24
+
+# reset the Arduino, its driven by an open collector pin 
+if [ ! -e /sys/class/gpio/gpio$RESETPIN ] ; then
+	echo $RESETPIN > /sys/class/gpio/export
+	sleep 0.1
+fi
+
+# Setting the direction enables the pin as an output as well as driving the required level
+echo high > /sys/class/gpio/gpio$RESETPIN/direction
+sleep 0.01
+echo low  > /sys/class/gpio/gpio$RESETPIN/direction
+
+

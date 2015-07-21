@@ -1,0 +1,7 @@
+# Read the fuses from the microcontroller. This is a good way to determine if its still talking to us
+# If it does not read, you may need to use high voltage parallel programming (hvpp)
+# This script uses the stk500v2 protocol
+
+# read fuses
+/usr/local/bin/avrdude -patmega2560 -D  -C /usr/local/etc/avrdude.conf -c stk500v2 -P /dev/ttyACM0 -b 115200 -U lfuse:r:-:h -U hfuse:r:-:h -U efuse:r:-:h
+

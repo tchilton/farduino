@@ -1,0 +1,210 @@
+# My custom boards
+# Derived from standard Arduino boards, but with different programming interfaces
+# The standard Arduino file this is taken from is in c:\Program Files (x86)\Arduino\hardware\arduino\avr
+# Need to look at consolidating what we can from the standard boards.txt, see the reference articles 
+# https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification#custom-board-menus
+
+# Standard sub-menu
+menu.cpu=Processor
+
+# New sub-menu types
+menu.slave=Upload Profile
+menu.uploader=Upload Via Host
+
+## Start of customisation for Mega 2560
+#######################################
+
+# Remote upload hosts - one per device that actually performs the upload
+mega.menu.uploader.prod_coop=Chicken Coop pi - Prod
+mega.menu.uploader.prod_coop.uploader.environment=chicken-coop-prod
+
+mega.menu.uploader.dev_coop=Chicken Coop pi - Dev
+mega.menu.uploader.dev_coop.uploader.environment=chicken-coop-dev
+
+# Identify each of the sub-controllers that the parent device can talk to.
+# Restricted to this family only 
+mega.menu.slave.main=Main Controller
+mega.menu.slave.main.slave.device=main
+mega.menu.slave.main.slave.remote_image=/firmware/main/firmware.hex
+
+## Standard Arduino Mega 2560 ### 
+
+mega.name=Arduino Mega or Mega 2560-via SSH
+mega.upload.tool=remotessh
+mega.upload.maximum_data_size=8192
+
+mega.bootloader.tool=remotessh
+mega.bootloader.low_fuses=0xFF
+mega.bootloader.unlock_bits=0x3F
+mega.bootloader.lock_bits=0x0F
+
+mega.build.f_cpu=16000000L
+mega.build.core=arduino
+mega.build.variant=mega
+# default board  may be overridden by the cpu menu
+mega.build.board=AVR_MEGA2560
+
+## Arduino Mega w/ ATmega2560
+## -------------------------
+mega.menu.cpu.atmega2560=ATmega2560 (Mega 2560)
+
+mega.menu.cpu.atmega2560.upload.protocol=wiring
+mega.menu.cpu.atmega2560.upload.maximum_size=253952
+mega.menu.cpu.atmega2560.upload.speed=115200
+
+mega.menu.cpu.atmega2560.bootloader.high_fuses=0xD8
+mega.menu.cpu.atmega2560.bootloader.extended_fuses=0xFD
+mega.menu.cpu.atmega2560.bootloader.file=stk500v2/stk500boot_v2_mega2560.hex
+
+mega.menu.cpu.atmega2560.build.mcu=atmega2560
+mega.menu.cpu.atmega2560.build.board=AVR_MEGA2560
+
+## Arduino Mega w/ ATmega1280
+## -------------------------
+mega.menu.cpu.atmega1280=ATmega1280
+
+mega.menu.cpu.atmega1280.upload.protocol=arduino
+mega.menu.cpu.atmega1280.upload.maximum_size=126976
+mega.menu.cpu.atmega1280.upload.speed=57600
+
+mega.menu.cpu.atmega1280.bootloader.high_fuses=0xDA
+mega.menu.cpu.atmega1280.bootloader.extended_fuses=0xF5
+mega.menu.cpu.atmega1280.bootloader.file=../mybootloader/atmega/ATmegaBOOT_168_atmega1280.hex
+
+mega.menu.cpu.atmega1280.build.mcu=atmega1280
+mega.menu.cpu.atmega1280.build.board=AVR_MEGA
+
+mega.upload.tool=remotessh
+mega.upload.maximum_data_size=8192
+
+mega.bootloader.tool=remotessh
+mega.bootloader.low_fuses=0xFF
+mega.bootloader.unlock_bits=0x3F
+mega.bootloader.lock_bits=0x0F
+
+mega.build.f_cpu=16000000L
+mega.build.core=arduino
+mega.build.variant=mega
+# default board  may be overridden by the cpu menu
+mega.build.board=AVR_MEGA2560
+
+## Arduino Mega w/ ATmega2560
+## -------------------------
+mega.menu.cpu.atmega2560=ATmega2560 (Mega 2560)
+
+mega.menu.cpu.atmega2560.upload.protocol=wiring
+mega.menu.cpu.atmega2560.upload.maximum_size=253952
+mega.menu.cpu.atmega2560.upload.speed=115200
+
+mega.menu.cpu.atmega2560.bootloader.high_fuses=0xD8
+mega.menu.cpu.atmega2560.bootloader.extended_fuses=0xFD
+mega.menu.cpu.atmega2560.bootloader.file=stk500v2/stk500boot_v2_mega2560.hex
+
+mega.menu.cpu.atmega2560.build.mcu=atmega2560
+mega.menu.cpu.atmega2560.build.board=AVR_MEGA2560
+
+## End of MEGA 2560 ##
+
+
+
+
+
+## Start of Arduino Pro or Pro Mini ##
+######################################
+
+## My custom menus
+
+# Remote upload hosts - one per device that actually performs the upload
+pro.menu.uploader.prod_coop=Chicken Coop pi - Prod
+pro.menu.uploader.prod_coop.uploader.environment=chicken-coop-prod
+
+pro.menu.uploader.dev_coop=Chicken Coop pi - Dev
+pro.menu.uploader.dev_coop.uploader.environment=chicken-coop-dev
+
+# Identify each of the sub-controllers that the parent device can talk to.
+# Restricted to this family only 
+
+pro.menu.slave.rotator=Solar Rotator
+pro.menu.slave.rotator.slave.device=rotator
+pro.menu.slave.rotator.slave.remote_image=/firmware/rotator/firmware.hex
+
+## Standard Arduino definitions
+
+pro.name=Arduino Pro or Pro Mini-via SSH
+
+pro.upload.tool=remotessh
+pro.upload.protocol=arduino
+
+pro.bootloader.tool=remotessh
+pro.bootloader.unlock_bits=0x3F
+pro.bootloader.lock_bits=0x0F
+
+pro.build.board=AVR_PRO
+pro.build.core=arduino
+pro.build.variant=eightanaloginputs
+
+## Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega328
+## -------------------------------------------------
+pro.menu.cpu.16MHzatmega328=ATmega328 (5V, 16 MHz)
+
+pro.menu.cpu.16MHzatmega328.upload.maximum_size=30720
+pro.menu.cpu.16MHzatmega328.upload.maximum_data_size=2048
+pro.menu.cpu.16MHzatmega328.upload.speed=57600
+
+pro.menu.cpu.16MHzatmega328.bootloader.low_fuses=0xFF
+pro.menu.cpu.16MHzatmega328.bootloader.high_fuses=0xDA
+pro.menu.cpu.16MHzatmega328.bootloader.extended_fuses=0x05
+pro.menu.cpu.16MHzatmega328.bootloader.file=atmega/ATmegaBOOT_168_atmega328.hex
+
+pro.menu.cpu.16MHzatmega328.build.mcu=atmega328p
+pro.menu.cpu.16MHzatmega328.build.f_cpu=16000000L
+
+## Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega328
+## --------------------------------------------------
+pro.menu.cpu.8MHzatmega328=ATmega328 (3.3V, 8 MHz)
+
+pro.menu.cpu.8MHzatmega328.upload.maximum_size=30720
+pro.menu.cpu.8MHzatmega328.upload.maximum_data_size=2048
+pro.menu.cpu.8MHzatmega328.upload.speed=57600
+
+pro.menu.cpu.8MHzatmega328.bootloader.low_fuses=0xFF
+pro.menu.cpu.8MHzatmega328.bootloader.high_fuses=0xDA
+pro.menu.cpu.8MHzatmega328.bootloader.extended_fuses=0x05
+pro.menu.cpu.8MHzatmega328.bootloader.file=atmega/ATmegaBOOT_168_atmega328_pro_8MHz.hex
+
+pro.menu.cpu.8MHzatmega328.build.mcu=atmega328p
+pro.menu.cpu.8MHzatmega328.build.f_cpu=8000000L
+
+## Arduino Pro or Pro Mini (5V, 16 MHz) w/ ATmega168
+## -------------------------------------------------
+pro.menu.cpu.16MHzatmega168=ATmega168 (5V, 16 MHz)
+
+pro.menu.cpu.16MHzatmega168.upload.maximum_size=14336
+pro.menu.cpu.16MHzatmega168.upload.maximum_data_size=1024
+pro.menu.cpu.16MHzatmega168.upload.speed=19200
+
+pro.menu.cpu.16MHzatmega168.bootloader.low_fuses=0xff
+pro.menu.cpu.16MHzatmega168.bootloader.high_fuses=0xdd
+pro.menu.cpu.16MHzatmega168.bootloader.extended_fuses=0x00
+pro.menu.cpu.16MHzatmega168.bootloader.file=atmega/ATmegaBOOT_168_diecimila.hex
+
+pro.menu.cpu.16MHzatmega168.build.mcu=atmega168
+pro.menu.cpu.16MHzatmega168.build.f_cpu=16000000L
+
+## Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega168
+## --------------------------------------------------
+pro.menu.cpu.8MHzatmega168=ATmega168 (3.3V, 8 MHz)
+
+pro.menu.cpu.8MHzatmega168.upload.maximum_size=14336
+pro.menu.cpu.8MHzatmega168.upload.maximum_data_size=1024
+pro.menu.cpu.8MHzatmega168.upload.speed=19200
+
+pro.menu.cpu.8MHzatmega168.bootloader.low_fuses=0xc6
+pro.menu.cpu.8MHzatmega168.bootloader.high_fuses=0xdd
+pro.menu.cpu.8MHzatmega168.bootloader.extended_fuses=0x00
+pro.menu.cpu.8MHzatmega168.bootloader.file=atmega/ATmegaBOOT_168_pro_8MHz.hex
+
+pro.menu.cpu.8MHzatmega168.build.mcu=atmega168
+pro.menu.cpu.8MHzatmega168.build.f_cpu=8000000L
+
+##############################################################
