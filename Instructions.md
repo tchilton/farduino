@@ -182,7 +182,8 @@ when debugging connectivity
 
 Prepare for the ssh keys - create folders and set permissions 
 
-```cd /home/farduino
+```bash
+cd /home/farduino
 mkdir .ssh
 chmod 700 .ssh
 cd .ssh
