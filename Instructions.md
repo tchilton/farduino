@@ -424,7 +424,8 @@ we now need to log into the Raspberry Pi and perform some configuration.
 - Perform the following commands. This sets the files to be owned by farduino 
   on your system
 
-```cd /firmware
+```bash
+cd /firmware
 chown -R farduino:farduino /firmware/*
 ```
 
